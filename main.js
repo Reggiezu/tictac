@@ -10,7 +10,6 @@ if(isMoveLegal(row,col)){
     board[row][col]=piece
     console.log("piece placed")
     console.log(board);
-    // isGameDone(piece)
     gameRound++;
     console.log(isGameDone(piece) + " This is your piece: "+ piece)
     console.log("Round: "+gameRound);
@@ -108,6 +107,5 @@ return cpu.move(rowMove,colMove)
 
 const Zu =  createPlayer("Zu","X")
 const cpu =  createPlayer("Computer",pieces.find(item => item !== Zu.piece))
-// move(Zu,1,1)
-// randomCpuMove(cpu)
+
 
