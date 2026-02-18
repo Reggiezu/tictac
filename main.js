@@ -1,18 +1,25 @@
 // ===== DOM refs =====
+//Form Elements 
 const playerOneInput = document.getElementById("playerOneName");
 const playerTwoInput = document.getElementById("playerTwoName");
 const submitFormBtn = document.getElementById("submitForm");
 const radioSelectSingle = document.getElementById("singlePlayer");
 const radioSelectTwo = document.getElementById("twoPlayers");
 const playerTwoHidden = document.getElementById("player2only");
-const gameSession = document.getElementById("gameSession");
+const playerCreationForm = document.getElementById("startGame")
+// Game Session
+const gameSession = document.getElementById("gameUI");
+const scoreboard = document.getElementById("scoreboard");
+const p1Card = document.getElementById("p1Card");
+const p1ScoreMarker = document.getElementById("p1Marker");
+const p1Score = document.getElementById("p1Score");
+const p2Card = document.getElementById("p2Card");
+const p2ScoreMarker = document.getElementById("p2Marker");
+const p2Score = document.getElementById("p2Score");
+const gameBoardContainer = document.getElementById("board");
+const newGameBtn = document.getElementById("newGameBtn");
 
-// ===== UI helpers =====
-function updatePlayerVisibility() {
-  playerTwoHidden.classList.toggle("hidden", !radioSelectTwo.checked);
-}
-radioSelectTwo.addEventListener("change", updatePlayerVisibility);
-radioSelectSingle.addEventListener("change", updatePlayerVisibility);
+
 
 // ===== Game module (IIFE) =====
 // Uses your existing logic, just centralized state + callable init.
@@ -30,6 +37,7 @@ const Game = (function () {
       ["", "", ""],
     ];
     gameRound = 1;
+    renderBoard();
     return board;
   }
 
@@ -132,15 +140,50 @@ const Game = (function () {
     getOtherPiece,
   };
 })();
+// ===== UI helpers =====
+function updatePlayerVisibility() {
+  playerTwoHidden.classList.toggle("hidden", !radioSelectTwo.checked);
+}
+radioSelectTwo.addEventListener("change", updatePlayerVisibility);
+radioSelectSingle.addEventListener("change", updatePlayerVisibility);
 
+function renderBoard() {
+    // Clear the container first to prevent duplicates when updating the board
+    gameBoardContainer.innerHTML = ''; 
+    const board= Game.getBoard();
+    // Loop through the rows of the 2D array
+    board.forEach((row, rowIndex) => {
+        // Loop through the cells in each row
+        row.forEach((cellValue, colIndex) => {
+            // Create a new div element for each cell
+            const cellElement = document.createElement('div');
+            cellElement.classList.add('cell');
+            // Set the cell's content to the value in the array
+            cellElement.textContent = cellValue; 
+            
+            // Optional: Add data attributes for position (useful for game logic)
+            cellElement.dataset.row = rowIndex;
+            cellElement.dataset.col = colIndex;
+
+            // Optional: Add event listener for user interaction (e.g., clicking a cell)
+            cellElement.addEventListener('click', () => {
+                console.log(`Clicked on cell at row ${rowIndex}, column ${colIndex}`);
+                // Add game logic here (e.g., make a move, update the array, then re-render)
+            });
+
+            // Append the cell element to the game board container
+            gameBoardContainer.appendChild(cellElement);
+        });
+    });
+}
 // ===== “Start game” wiring =====
 let playerOnePlayer = null;
 let cpuPlayer = null;
 
 function startNewGame() {
   Game.init();
-  // you can swap this for whatever container you *actually* want hidden/shown
   gameSession.classList.remove("hidden");
+  playerCreationForm.classList.add("hidden");
 }
 
 // Submit -> build player(s) -> init game
@@ -156,11 +199,10 @@ submitFormBtn.addEventListener("click", function (e) {
 
     startNewGame();
 
-    // (Optional) your old behavior example:
     // Game.randomCpuMove(cpuPlayer);
 
     return;
   }
 
-  // you said you’ll add a toast fail-safe later, so leaving this empty on purpose
+  //  add a toast fail-safe later
 });
