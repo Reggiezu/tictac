@@ -1,1 +1,19 @@
 .hidden { display: none; }
+/* style.css */
+#board {
+    display: grid;
+    /* This creates a 3x3 grid for the example array */
+    grid-template-columns: repeat(3, 100px); 
+    grid-template-rows: repeat(3, 100px);
+    border: 2px solid black;
+    width: 306px;
+}
+
+.cell {
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+}
