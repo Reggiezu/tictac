@@ -2,8 +2,53 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Tic Tac Toe</title>
   </head>
-  <body></body>
+  <body>
+    <header><h1>TicTacToe</h1></header>
+    <div id="gameSession">
+        <div id="startGame">
+          <form id="playInformation">
+           <label for="name">PlayerOne:</label>
+           <input type="text" id="playerOneName"><br>
+              <div id="player2only" class="hidden"> 
+                <label for="name2"  > PlayerTwo:</label>
+              <input type="text" id="playerTwoName" ><br>
+              </div>
+           <label for="singlePlayer">Single Player: </label>
+           <input type="radio" id="singlePlayer" value="singlePlayer" name="playerCount" checked>
+           <label for="twoPlayers">Two players: </label>
+           <input type="radio" id="twoPlayers" value="twoPlayers" name="playerCount"><br>
+            <label for="Marker">Player One Marker: </label>
+            <label for="XMarker">X </label>
+           <input type="radio" id="XMarker" value="X" name="playerMarker" checked>
+           <label for="OMarker">O </label>
+           <input type="radio" id="OMarker" value="O" name="playerMarker"><br>
+           <button type="submit" id="submitForm">Start Game!</button>
+          </form>
+        </div>
+          <div id="gameUI" class="hidden">
+            <section id="scoreboard">
+              <div id="p1Card">
+                <div id="p1Name"></div>
+                <div id="p1Marker"></div>
+                <div id="p1Score"></div>
+              </div>
+
+              <div id="p2Card">
+                <div id="p2Name"></div>
+                <div id="p2Marker"></div>
+                <div id="p2Score"></div>
+              </div>
+            </section>
+
+            <section id="board"></section>
+
+            <button id="newGameBtn" type="button">New Game</button>
+        </div>
+      </div>
+    <script src="main.js"></script>
+  </body>
 </html>
