@@ -38,7 +38,6 @@ const Game = (function () {
       ["", "", ""],
     ];
     movesMade =0;
-    renderBoard();
     return board;
   }
 
@@ -176,25 +175,42 @@ function renderBoard() {
 
             // Optional: Add event listener for user interaction (e.g., clicking a cell)
             cellElement.addEventListener('click', () => {
-                console.log(`Clicked on cell at row ${rowIndex}, column ${colIndex}`);
-                // Add game logic here (e.g., make a move, update the array, then re-render)
-            });
+                handleCellClick(rowIndex, colIndex);
+                });
+
 
             // Append the cell element to the game board container
             gameBoardContainer.appendChild(cellElement);
         });
     });
 }
+// ===== Controller =====
 // ===== “Start game” wiring =====
 let playerOnePlayer = null;
 let cpuPlayer = null;
+function handleCellClick(row, col) {
+    const player = Game.getCurrentPlayer();
+    const result = player.move(row, col);
 
+    if (!result.ok) return;
+
+    renderBoard();
+
+    // If single player and next is CPU
+    const nextPlayer = Game.getCurrentPlayer();
+    if (nextPlayer.isCpu) {
+        Game.randomCpuMove(nextPlayer);
+        renderBoard();
+    }
+}
+
+ 
 function startNewGame() {
   Game.init();
+  renderBoard();
   gameSession.classList.remove("hidden");
   playerCreationForm.classList.add("hidden");
 }
-
 // Submit -> build player(s) -> init game
 submitFormBtn.addEventListener("click", function (e) {
   e.preventDefault();
