@@ -28,7 +28,8 @@ const Game = (function () {
 
   // private state
   let board = [];
-  let gameRound = 1;
+  let players = []
+  let movesMade = 0;
 
   function init() {
     board = [
@@ -36,8 +37,7 @@ const Game = (function () {
       ["", "", ""],
       ["", "", ""],
     ];
-    gameRound = 1;
-    renderBoard();
+    movesMade =0;
     return board;
   }
 
@@ -45,8 +45,16 @@ const Game = (function () {
     return board;
   }
 
+  function getPlayers() {
+    return players;
+  }
+
+   function getCurrentPlayer() {
+    return players[movesMade % players.length];;
+  }
+
   function getRound() {
-    return gameRound;
+    return movesMade;
   }
 
   function legalRange(num) {
@@ -80,7 +88,7 @@ const Game = (function () {
 
   function isGameDone(piece) {
     if (threeInARow(piece) === true) return gameOver(2);
-    if (gameRound > 9) return gameOver(1);
+    if (movesMade > 8) return gameOver(1);
     return "Continue game";
   }
 
@@ -98,18 +106,17 @@ const Game = (function () {
       console.log("piece placed");
       console.log(board);
 
-      gameRound++;
+      movesMade++;
 
       const msg = isGameDone(piece);
       console.log(msg + " This is your piece: " + piece);
-      console.log("Round:", gameRound);
+      console.log("Round:", movesMade);
 
-      // IMPORTANT: no TS union in JS
-      // status is just a plain string for now (your existing messages)
       return { ok: true, status: msg };
     }
-
-    return { name, piece, move };
+    const isCpu = (name === "Computer")
+    players.push({ name, piece, move, isCpu})
+    return { name, piece, move, isCpu };
   }
 
   function randomCpuMove(cpu) {
@@ -129,7 +136,6 @@ const Game = (function () {
   function getOtherPiece(piece) {
     return pieces.find((p) => p !== piece);
   }
-
   // public API
   return {
     init,
@@ -138,6 +144,8 @@ const Game = (function () {
     createPlayer,
     randomCpuMove,
     getOtherPiece,
+    getPlayers,
+    getCurrentPlayer,
   };
 })();
 // ===== UI helpers =====
@@ -167,25 +175,42 @@ function renderBoard() {
 
             // Optional: Add event listener for user interaction (e.g., clicking a cell)
             cellElement.addEventListener('click', () => {
-                console.log(`Clicked on cell at row ${rowIndex}, column ${colIndex}`);
-                // Add game logic here (e.g., make a move, update the array, then re-render)
-            });
+                handleCellClick(rowIndex, colIndex);
+                });
+
 
             // Append the cell element to the game board container
             gameBoardContainer.appendChild(cellElement);
         });
     });
 }
+// ===== Controller =====
 // ===== “Start game” wiring =====
 let playerOnePlayer = null;
 let cpuPlayer = null;
+function handleCellClick(row, col) {
+    const player = Game.getCurrentPlayer();
+    const result = player.move(row, col);
 
+    if (!result.ok) return;
+
+    renderBoard();
+
+    // If single player and next is CPU
+    const nextPlayer = Game.getCurrentPlayer();
+    if (nextPlayer.isCpu) {
+        Game.randomCpuMove(nextPlayer);
+        renderBoard();
+    }
+}
+
+ 
 function startNewGame() {
   Game.init();
+  renderBoard();
   gameSession.classList.remove("hidden");
   playerCreationForm.classList.add("hidden");
 }
-
 // Submit -> build player(s) -> init game
 submitFormBtn.addEventListener("click", function (e) {
   e.preventDefault();
